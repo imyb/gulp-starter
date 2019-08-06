@@ -86,6 +86,7 @@ function style() {
         .pipe(autoprefixer())
         .pipe(sourcemaps.write())
         .pipe(gulpif(process.env.NODE_ENV === 'production', gulp.dest(PATH.DIST.CSS), gulp.dest(PATH.TMP.CSS)))
+        .pipe(browserSync.stream());
 }
 
 
@@ -101,12 +102,14 @@ function script() {
         .pipe(gulpif(process.env.NODE_ENV === 'production', uglify()))
         .pipe(sourcemaps.write())
         .pipe(gulpif(process.env.NODE_ENV === 'production', gulp.dest(PATH.DIST.JS), gulp.dest(PATH.TMP.JS)))
+        .pipe(browserSync.stream());
 }
 function script_vendor() {
     return gulp.src(PATH.SRC.JS_VENDOR)
         .pipe(concat('vendor.js'))
         .pipe(uglify())
         .pipe(gulpif(process.env.NODE_ENV === 'production', gulp.dest(PATH.DIST.JS), gulp.dest(PATH.TMP.JS)))
+        .pipe(browserSync.stream());
 }
 
 
@@ -119,6 +122,7 @@ function html() {
             path: [SRC + DIR.HTML]
         }))
         .pipe(gulpif(process.env.NODE_ENV === 'production', gulp.dest(PATH.DIST.HTML), gulp.dest(PATH.TMP.HTML)))
+        .pipe(browserSync.stream());
 }
 
 
@@ -129,6 +133,7 @@ function image() {
     return gulp.src(PATH.SRC.IMG)
         .pipe(imagemin())
         .pipe(gulpif(process.env.NODE_ENV === 'production', gulp.dest(PATH.DIST.IMG), gulp.dest(PATH.TMP.IMG)))
+        .pipe(browserSync.stream());
 }
 
 
@@ -136,18 +141,18 @@ function image() {
  * watch task
  */
 function watch() {
-    gulp.watch(PATH.SRC.HTML, html).on('change', browserSync.reload);
-    gulp.watch(PATH.SRC.SCSS, style).on('change', browserSync.reload);
-    gulp.watch(PATH.SRC.JS, script).on('change', browserSync.reload);
-    gulp.watch(PATH.SRC.JS_VENDOR, script_vendor).on('change', browserSync.reload);
-    gulp.watch(PATH.SRC.IMG, image).on('change', browserSync.reload);
+    gulp.watch(PATH.SRC.HTML, html);
+    gulp.watch(PATH.SRC.SCSS, style);
+    gulp.watch(PATH.SRC.JS, script);
+    gulp.watch(PATH.SRC.JS_VENDOR, script_vendor);
+    gulp.watch(PATH.SRC.IMG, image);
 }
 
 
 /**
  * serve task
  */
-function serve() {
+function serve(done) {
     browserSync.init({
         port: 8080,
         server: {
@@ -156,6 +161,11 @@ function serve() {
         },
         //open: false
     });
+    done();
+}
+function serveReload(done) {
+    browserSync.reload();
+    done();
 }
 
 
