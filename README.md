@@ -1,3 +1,0 @@
-# GULP Starter
-
-GULP Starter
